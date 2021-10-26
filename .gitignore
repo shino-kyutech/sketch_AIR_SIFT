@@ -33,6 +33,8 @@
 
 *.xlsx
 *.csv
+# temporary header file
+src/parm.h
 # result csv files
 search/result/double_filtering_*.csv
 
