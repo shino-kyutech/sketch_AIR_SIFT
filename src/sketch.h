@@ -73,11 +73,23 @@ p_dim   part_num        part_start      part_end        part_dim        part_pjt
 17 - 19 5               54              63              10              3
 */
 
+//	ftr_type  p[PJT_DIM];	// BP, QBP の中心点
+//	dist_type r[PJT_DIM];	// BP, QBP の半径
+//	int type;				// 基礎分割関数（GHP = 0, BP = 1, QBP = 2, PQBP = 3）（現状ではQBPとPQBPのみ）
 typedef struct {
 	ftr_type  p[PJT_DIM];	// BP, QBP の中心点
 	dist_type r[PJT_DIM];	// BP, QBP の半径
 	int type;				// 基礎分割関数（GHP = 0, BP = 1, QBP = 2, PQBP = 3）（現状ではQBPとPQBPのみ）
 } pivot_type;
+
+//	answer_type *answer;
+//	ftr_type ftr;
+//	sketch_type sketch;
+typedef struct {
+	answer_type *answer;
+	ftr_type ftr;
+	sketch_type sketch;
+} struct_answer_sketch;
 
 //	query_type query;
 //	sketch_type sketch;		// 質問点のスケッチ
@@ -94,21 +106,21 @@ typedef struct {
 	struct_answer_sketch answer; // 最近傍のスケッチ
 } struct_query_sketch;
 
-//	answer_type *answer;
-//	ftr_type ftr;
-//	sketch_type sketch;
-typedef struct {
-	answer_type *answer;
-	ftr_type ftr;
-	sketch_type sketch;
-} struct_answer_sketch;
-
 typedef struct {
 	sketch_type sk;		// sketch
 	int num;			// number of data whose sketch is s
 	int pos;			// offset position in sftr
 } sk_num_pair;
 
+//	int num_data; 				// the number of data points in dataset
+//	ftr_type *ftr_data;			// array of ftr data (NULL, if not used)
+//	sketch_type *sk;			// array of sketches (NULL, if not used)
+//	int *idx; 					// idx[i] = the original position of the i-th data in sketch order (NULL, if not used)
+//	#ifdef NARROW_SKETCH
+//	int *bkt;					// bkt[s] = The first position of the data whose sketch is s in the data arranged in the sketch order (NULL, if not used)
+//	#endif
+//	int num_nonempty_buckets;	// number of nonempty buckets = number of sk_num_pairs
+//	sk_num_pair *sk_num;		// representing nonempty buckets (NULL, if not used)
 typedef struct {
 	int num_data; 				// the number of data points in dataset
 	ftr_type *ftr_data;			// array of ftr data (NULL, if not used)

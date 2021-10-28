@@ -9,7 +9,7 @@ echo "5 - dataset_1.ftr, ... , dataset_n file = dataset files"
 exit 1
 fi
 
-ds_dir="/mnt/g/Deep1B/dataset"
+ds_dir="/mnt/e/Deep1B/dataset"
 qr_dir="/mnt/e/Deep1B/query"
 pr_dir="../src"
 

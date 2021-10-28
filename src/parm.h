@@ -86,6 +86,7 @@
 #define USE_AIR
 #ifdef USE_AIR
 #define NUM_TRIAL_AIR 500 // Number of Trials in AIR
+#define TRUNCATE_AT 10    // Number of candidates (% to num_data) to use evaluate pivots in optimization by AIR 
 #define NUM_TRIAL_LS  0	  // Number of Trials in Local Search
 #define MAX_SAMPLESIZE 10000
 #define RETRY 200
@@ -118,6 +119,7 @@
 #define REPLACE_TRIAL 10
 
 #define VAR_FLIP
+#define NUM_FLIPS 1
 
 #ifndef EVAL_MODE		// 評価にlogを使った重み付きスコア総和を用いるときは 1 にする．
 #define EVAL_MODE 0

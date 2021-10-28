@@ -44,7 +44,7 @@ double collision(sketch_type sk[]);
 // wide スケッチ用は，まずは，QBP のみで 
 // optimize_pivot_by_precision // LS and AIR
 #ifdef USE_AIR
-void optimize_pivot_by_precision_AIR_flip(int obj, int mode, int num_flips, struct_work_for_pivot_selection *work);
+void optimize_pivot_by_precision_AIR_flip(struct_work_for_pivot_selection *work);
 struct_work_for_pivot_selection *new_work_for_pivot_selection(int patrition_type, char *sample_dataset_file, char *query_file, char *answer_file);
 void make_sketch(struct_work_for_pivot_selection *work);
 void remake_sketch(int dim);
@@ -58,7 +58,7 @@ void remake_query_sketch_for_resample(int dim, int resampling_size, struct_work_
 void resample_query(int samplesize, struct_work_for_pivot_selection *work);
 double precision_resample_cursor_2_n(int num_K, int resample_size, int mode, double *prec, struct_work_for_pivot_selection *work);
 #ifdef EVAL_BY_SEQUENTIAL_FILTERING
-double precision_resample_by_sequential_filtering(int obj, int resampling_size, int mode, double *prec);
+double precision_resample_by_sequential_filtering(int obj, int resampling_size, int mode, double *prec, struct_work_for_pivot_selection *work);
 #endif
 void shuffle(int a[], int n, int m);
 void make_idx_bkt(sketch_type sk[], int num_data, int **idx, int **bkt);
