@@ -32,7 +32,8 @@ int main(int argc, char *argv[])
 	#else
 	#error "PARTITION_TYPE_QBP or PARTITION_TYPE_PQBP should be defined."
 	#endif
-	ftr_type *sample = get_sample(sample_ds); // ピボット評価用のサンプル
+	ftr_sample sample = {SAMPLE_SIZE_QBP, NULL};
+	get_sample(sample_ds, &sample); // ピボット評価用のサンプル
 	ftr_type median = get_median(sample_ds); //中央値計算
 
 //	for(int i = 0; i < FTR_DIM; i++) {
@@ -43,7 +44,7 @@ int main(int argc, char *argv[])
 	time_t s_t, e_t;
 	start = clock(); s_t = time(NULL);
 	fprintf(stderr, "QBP starts: NUM_TRIAL_QBP = %d\n", NUM_TRIAL_QBP);
-	select_pivot_QBP(pivot, median, sample, sample_ds, nt);
+	select_pivot_QBP(pivot, median, &sample, sample_ds, nt);
 	end = clock(); e_t = time(NULL);
 	write_pivot(pivot_file, pivot);
 	fprintf(stderr, "TIME, %.2f, %5ld, NUM_TRIAL_QBP, %d\n", (double)(end-start)/CLOCKS_PER_SEC, e_t - s_t, NUM_TRIAL_QBP);

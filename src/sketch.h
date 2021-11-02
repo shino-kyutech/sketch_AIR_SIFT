@@ -85,27 +85,32 @@ typedef struct {
 //	answer_type *answer;
 //	ftr_type ftr;
 //	sketch_type sketch;
-typedef struct {
-	answer_type *answer;
-	ftr_type ftr;
-	sketch_type sketch;
-} struct_answer_sketch;
+// typedef struct {
+//	answer_type *answer;
+//	ftr_type ftr;
+//	sketch_type sketch;
+// } struct_answer_sketch;
 
 //	query_type query;
 //	sketch_type sketch;		// 質問点のスケッチ
 //	int bd[PJT_DIM];		// 質問点と分割境界との距離（距離下限やscoreの計算に使用）
 //	int idx[PJT_DIM];		// bd の順位表
 //	dist_type tbl[TABLE_SIZE][256]; 	// scoreの計算に用いる表関数
-//	struct_answer_sketch answer; // 最近傍のスケッチ
+//	answer_type answer; 	// 最近傍のデータ番号と距離
+//	sketch_type answer_sketch; // 最近傍のスケッチ
 typedef struct {
 	query_type query;
 	sketch_type sketch;		// 質問点のスケッチ
 	int bd[PJT_DIM];		// 質問点と分割境界との距離（距離下限やscoreの計算に使用）
 	int idx[PJT_DIM];		// bd の順位表
 	dist_type tbl[TABLE_SIZE][256]; 	// scoreの計算に用いる表関数
-	struct_answer_sketch answer; // 最近傍のスケッチ
+	answer_type answer; 	// 最近傍のデータ番号と距離
+	sketch_type answer_sketch; // 最近傍のスケッチ
 } struct_query_sketch;
 
+//	sketch_type sk;		// sketch
+//	int num;			// number of data whose sketch is s
+//	int pos;			// offset position in sftr
 typedef struct {
 	sketch_type sk;		// sketch
 	int num;			// number of data whose sketch is s
@@ -218,7 +223,8 @@ void enq_c2_n(QUE_c2 *qe, struct_que_c2_n *que);
 void enq_c2_n_after_deq(QUE_c2 *qe, struct_que_c2_n *que);
 #endif
 
-struct_query_sketch *make_query_sketch(struct_dataset *ds_query, pivot_type *pivot);
+// struct_query_sketch *make_query_sketch(struct_dataset *ds_query, pivot_type *pivot);
+
 void set_query_sketch(struct_query_sketch *qs, query_type *query, pivot_type *pivot);
 void set_query_sketch_p(struct_query_sketch *qs, query_type *query, pivot_type *pivot, double p);
 dist_type priority(sketch_type s, struct_query_sketch *qs);

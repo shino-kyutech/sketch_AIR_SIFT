@@ -18,6 +18,7 @@
 #define SEED 1 // random seed
 
 #define PARTITION_TYPE_QBP
+#define SKETCH_PARTITION 2 // QBP
 //#define PARTITION_TYPE_PQBP
 
 #define _OPENMP
@@ -70,10 +71,10 @@
 #define SCORE_P_1ST 1.0
 #define SCORE_P_2ND 1.0
 
-#define PRIORITY 0
+#define PRIORITY 0 // Hamming
 
-//#define SCORE_1
-//#define PRIORITY 1
+#define SCORE_1
+#define PRIORITY 1
 
 //#define SCORE_2
 //#define PRIORITY 2
@@ -81,14 +82,16 @@
 //#define SCORE_INF
 //#define PRIORITY 3
 
-#define NUM_TRIAL_QBP 100 // Number of Trials in incremental QBP
+#define NUM_TRIAL_QBP 100 // Number of Trials for each bit in incremental QBP
+#define SAMPLE_SIZE_QBP 5000 // Number of samples to calculate collisions
+#define SAMPLE_SIZE_RADIUS 1000 // Number of samples to calculate radius of pivot
+#define NUM_TRIAL_LS  0	  // Number of Trials in Local Search
 // Macro for AIR
 #define USE_AIR
 #ifdef USE_AIR
 #define NUM_TRIAL_AIR 500 // Number of Trials in AIR
 #define TRUNCATE_AT 10    // Number of candidates (% to num_data) to use evaluate pivots in optimization by AIR 
-#define NUM_TRIAL_LS  0	  // Number of Trials in Local Search
-#define MAX_SAMPLESIZE 10000
+#define SAMPLE_SIZE_AIR 10000 // NUmber of sample queries for AIR
 #define RETRY 200
 #define REUSE 10	//取り換え頻度
 #define T_POWER 2

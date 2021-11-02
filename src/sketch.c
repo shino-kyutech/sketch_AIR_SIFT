@@ -733,8 +733,9 @@ void enq_c2_n_after_deq(QUE_c2 *qe, struct_que_c2_n *que)
     min_heapify_c2_n(0, que);
 }
 #endif // NARROW_SKETCH
-
-// 質問のスケッチを作成し，score計算のための分割境界との最小距離や表関数の配列を設定する
+/*
+// 質問データセットの全質問の質問処理のための構造体を作成する
+// score計算のための分割境界との最小距離や表関数の配列を設定する
 struct_query_sketch *make_query_sketch(struct_dataset *ds_query, pivot_type *pivot)
 {
 	struct_query_sketch *qs = (struct_query_sketch *)calloc(ds_query->num_data, sizeof(struct_query_sketch));
@@ -781,7 +782,10 @@ struct_query_sketch *make_query_sketch(struct_dataset *ds_query, pivot_type *piv
 	}
 	return qs;
 }
+*/
 
+// 質問 query (質問番号，ftr) のための構造体（スケッチなどを準備する
+// 正解（最近傍）に関するメンバ(answerとanswer_sketch)の設定は行わない
 void set_query_sketch(struct_query_sketch *qs, query_type *query, pivot_type *pivot)
 {
 	qs->query = *query;

@@ -11,7 +11,7 @@ fi
 
 ulimit -Sn 4000
 
-source ../program/set_directory.sh INTEL
+source ../src/set_directory.sh HDD
 
 pivot=$1; shift
 from=$1; shift
@@ -23,10 +23,10 @@ if [ ! -e $pv ]; then
   echo pivot file = $pv does not exist.
   exit
 fi
-wd=$(../program/pivot_property.sh -w $pv)
-dm=$(../program/pivot_property.sh -d $pv)
-pt=$(../program/pivot_property.sh -p $pv)
-np=$(../program/pivot_property.sh -n $pv)
+wd=$(../src/pivot_property.sh -w $pv)
+dm=$(../src/pivot_property.sh -d $pv)
+pt=$(../src/pivot_property.sh -p $pv)
+np=$(../src/pivot_property.sh -n $pv)
 
 if [ ${from} -lt 10 ] ; then
 out="$sf_dir/${pivot}_0${from}_${to}.sftr"

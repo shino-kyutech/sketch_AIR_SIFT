@@ -13,10 +13,14 @@
 
 int main(int argc, char *argv[])
 {
+	#ifdef _OPENMP
 	#if defined(NUM_THREADS) && NUM_THREADS > 1
 	omp_set_num_threads(NUM_THREADS);
 	#endif
 	int nt = omp_get_max_threads();
+	#else
+	int nt = 1;
+	#endif
 	fprintf(stderr, "number of threads = %d\n", nt);
 	char *sample_dataset 	= SAMPLE_DATASET;
 	char *query_file 		= QUERY_FILE;
@@ -37,9 +41,10 @@ int main(int argc, char *argv[])
 	clock_t start,end;
 	time_t s_t, e_t;
 	start = clock(); s_t = time(NULL);
-	ftr_type *sample = get_sample(work->ds_sample);
-	select_pivot_QBP(work->pivot, work->med, sample, work->ds_sample, nt);
-	fprintf(stderr, "AIR starts: NUM_TRIAL_AIR = %d, TRUNCATE_AT = %d\%, EVAL_MODE = %d, NUM_FLIPS", NUM_TRIAL_AIR, TRUNCATE_AT, EVAL_MODE, NUM_FLIPS);
+	ftr_sample sample = {SAMPLE_SIZE_QBP, (ftr_type *)malloc(SAMPLE_SIZE_QBP * sizeof(ftr_type))};
+	get_sample(work->ds_sample, &sample);
+	select_pivot_QBP(work->pivot, work->med, &sample, work->ds_sample, nt);
+	fprintf(stderr, "AIR starts: NUM_TRIAL_AIR = %d, TRUNCATE_AT = %d%%, EVAL_MODE = %d, NUM_FLIPS =%d", NUM_TRIAL_AIR, TRUNCATE_AT, EVAL_MODE, NUM_FLIPS);
 	#ifdef VAR_FLIP
 	fprintf(stderr, "VAR_FLIP\n");
 	#else

@@ -11,7 +11,7 @@ fi
 
 ulimit -Sn 4000
 
-source ../program/set_directory.sh INTEL
+source ../src/set_directory.sh HDD
 
 pivot=$1; shift
 
@@ -20,10 +20,10 @@ if [ ! -e $pv ]; then
   echo pivot file = $pv does not exist.
   exit
 fi
-wd=$(../program/pivot_property.sh -w $pv)
-dm=$(../program/pivot_property.sh -d $pv)
-pt=$(../program/pivot_property.sh -p $pv)
-np=$(../program/pivot_property.sh -n $pv)
+wd=$(../src/pivot_property.sh -w $pv)
+dm=$(../src/pivot_property.sh -d $pv)
+pt=$(../src/pivot_property.sh -p $pv)
+np=$(../src/pivot_property.sh -n $pv)
 
 range=$1; shift
 bk="$bk_dir/${pivot}_${range}.bkt"
@@ -70,7 +70,7 @@ cflags="$cflags -DSFTR_FILE=\"$sf\""
 
 echo $cflags
 
-ds=$(../program/expand_filenames.sh "${ds_dir}/base_" $range ".ftr")
+ds=$(../src/expand_filenames.sh "${ds_dir}/base_" $range ".ftr")
 
 echo $ds
 
@@ -91,7 +91,7 @@ fi
 
 lb="$l1.o $l2.o $l3.o $l4.o $l5.o -lm"
 
-pr=make_sorted_ftr_block
+pr=make_sorted_ftr
 
 gcc $cflags0 $cflags $pr_dir/$pr.c $lb -o $pr
 

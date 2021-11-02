@@ -41,10 +41,13 @@ typedef struct {
 } struct_ftr_id;
 
 // データセット（特徴データ）
+//	int num_data;			// 特徴データ数
+//	struct_ftr_id *ftr_id;	// 特徴データ（データID付き）の配列
+//	int sorted;				// 特徴データがスケッチ順にソートされているかどうか
 typedef struct {
 	int num_data;			// 特徴データ数
 	struct_ftr_id *ftr_id;	// 特徴データ（データID付き）の配列
-	int sorted;
+	int sorted;				// 特徴データがスケッチ順にソートされているかどうか
 } struct_dataset;
 
 // 特徴データのファイル入出力

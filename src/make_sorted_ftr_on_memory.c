@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 
 	int i;
 	for(i = 0; i < num_data; i++) {
-		if(i % 10000 == 0) fprintf(stderr, "*");
+		if(i % 1000000 == 0) fprintf(stderr, "*");
 		if(fwrite(&ds->ftr_id[i], sizeof(struct_ftr_id), 1, fp) != 1) { // スケッチ順で i 番目のレコード（ftrとid）を書き出す
 			fprintf(stderr, "fwrite error (ftr_id), i = %d, idx[%d] = %d\n", i, i, bucket_ds->idx[i]);
 			return -1;

@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 		#endif
 		double total_filtering_cost = 0, total_scoring_cost = 0, total_2nd_search_cost = 0, total_kNN_cost = 0;
 		double sort_cost = 0;
-		struct timespec ts1, ts2;
+//		struct timespec ts1, ts2;
 		struct timespec tp1, tp2;
 		clock_gettime(CLOCK_REALTIME, &tp1);
 //		double e_time_1st = 0, e_time_score = 0, e_time_2nd = 0, e_time_kNN = 0;
@@ -376,7 +376,8 @@ int main(int argc, char *argv[])
 				//fprintf(stderr, "%.9ld\n", e_time(&tp3, &tp5));
 			#else
 				if(num_queries <= 20 || i % 10 == 0) {
-					fprintf(stderr, "%.9lf, %.9lf, %.9lf, %.9lf, %.9lf, %d, %d, %d\n", scoring_cost, filtering_cost, kNN_cost, e_time(&tp4, &tp5), e_time(&tp3, &tp5), i, top_k[i]->buff[0].data_num, top_k[i]->buff[0].dist);
+					fprintf(stderr, "%.9lf, %.9lf, %.9lf, %.9lf, %.9lf, %d, %d, %d\n", scoring_cost, filtering_cost, kNN_cost, 
+									e_time(&tp4, &tp5), e_time(&tp3, &tp5), i, top_k[i]->buff[0].data_num, top_k[i]->buff[0].dist);
 					fprintf(stderr, "sort_cost = %.9lf, kNN_cost = %.9lf\n", sort_cost, kNN_cost);
 				}
 			#endif
@@ -384,7 +385,7 @@ int main(int argc, char *argv[])
 
 		clock_gettime(CLOCK_REALTIME,&tp2);
 		#if NUM_K > 0
-			fprintf(stderr, "total_scoring_cost, total_filtering_cost, total_2nd_search_cost, total_kNN_cost, e_time(&tp1, &tp2)\n");
+			fprintf(stderr, "scoring, filtering, 2nd_search, kNN, total_time\n");
 			fprintf(stderr, "%.9lf, %.9lf, %.9lf, %.9lf, %.9lf\n", total_scoring_cost, total_filtering_cost, total_2nd_search_cost, total_kNN_cost, e_time(&tp1, &tp2));
 		#else
 			#if NUM_K < 0
@@ -408,9 +409,10 @@ int main(int argc, char *argv[])
 			// out_result2(result_filename2, PJT_DIM, FTR_DIM, e_time(&tp1, &tp2), nc[i], num_queries, correct_answer, top_k, dh.sorted);
 			// double out_result_double(char *filename, int n_w, int e_w, int d, double e_time_1st, double e_time_score, double e_time_2nd, double e_time_kNN,  
 			//			double etime, double nc_1st, double nc_2nd, int num_queries, answer_type ans[], kNN_buffer *top_k[], char *query_file)
-			double recall = out_result_double(result_filename2, PJT_DIM, 0, FTR_DIM, total_filtering_cost, total_scoring_cost, 0, 0, 
-			e_time(&tp1, &tp2), nc[j], 0, num_queries, correct_answer, top_k, query_ftr_filename);
-			printf("1st, %.4lf, score, %.4lf, 2nd, %.4lf, kNN, %.4lf, total, %.4lf, recall, %.1lf\n", total_filtering_cost, total_scoring_cost, 0.0, total_2nd_search_cost, e_time(&tp1, &tp2), recall);
+			double recall = out_result_double(result_filename2, PJT_DIM, 0, FTR_DIM, total_filtering_cost, total_scoring_cost, total_2nd_search_cost, 
+								total_kNN_cost, e_time(&tp1, &tp2), nc[j], 0, num_queries, correct_answer, top_k, query_ftr_filename);
+			printf("filtering, %.4lf, scoring, %.4lf, 2nd_search, %.4lf, kNN, %.4lf, total, %.4lf, recall, %.1lf\n", 
+				total_filtering_cost, total_scoring_cost, total_kNN_cost, total_2nd_search_cost, e_time(&tp1, &tp2), recall);
 		#endif
 	}
 	return 0;

@@ -412,7 +412,8 @@ void sort_answer(int num, answer_type ans[])
 	qsort(ans, num, sizeof(answer_type), comp_answer);
 }
 
-void search_kNN(dataset_handle *dh, query_type *qr, int num_candidates, int data_num_of_candidate[], kNN_buffer *top_k) // 解候補から top-K を求める（第２段階検索）
+// 解候補から top-K を求める（第２段階検索）
+void search_kNN(dataset_handle *dh, query_type *qr, int num_candidates, int data_num_of_candidate[], kNN_buffer *top_k)
 {
 	#if defined(_OPENMP) && NUM_THREADS > 1
 	omp_set_num_threads(NUM_THREADS);
