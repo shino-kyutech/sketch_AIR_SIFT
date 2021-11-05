@@ -11,12 +11,12 @@ exit 0
 fi
 
 if [ $1 == "-p" ] ; then
-head -n 1 $2 | tr "," "\n" | head -n 1
+head -n 1 $2 | tr -d " " | tr "," "\n" | head -n 1
 exit 0
 fi
 
 if [ $1 == "-n" ] ; then
-head -n 1 $2 | tr ", " "\n" | tail -n 1
+head -n 1 $2 | tr -d " " | tr "," "\n" | head -n 2 | tail -n 1
 exit 0
 fi
 

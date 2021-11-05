@@ -151,7 +151,7 @@ void write_pivot(char *filename, pivot_type *pivot)
 		if(pivot->type == PQBP) {
 			fprintf(fp, "%d, %d\n", pivot->type, NUM_PART);		// 基礎分割関数, 分割数
 		} else {
-			fprintf(fp, "%d\n", pivot->type);		// 基礎分割関数
+			fprintf(fp, "%d, 1\n", pivot->type);				// 基礎分割関数，分割数 = 1
 		}
 		for(i = 0; i < PJT_DIM - 1; i++)	 	// 半径
 			fprintf(fp, "%d,", pivot->r[i]);

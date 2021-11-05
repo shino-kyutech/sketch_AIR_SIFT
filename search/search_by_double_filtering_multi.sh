@@ -178,6 +178,7 @@ cflags0="$cflags0 -DSCORE_P_2ND=${sp2}"
 #if [ $pt == 3 ] ; then
 cflags0="$cflags0 -DPARTITION_TYPE_QBP_AND_PQBP"
 cflags0="$cflags0 -DNUM_PART=$np"
+#cflags0="$cflags0 -DNUM_PART=1"
 #else
 #fi
 
@@ -243,6 +244,7 @@ l6=e_time
 
 lp="$pr_dir/$l1.c $pr_dir/$l2.c $pr_dir/$l3.c $pr_dir/$l4.c $pr_dir/$l5.c $pr_dir/$l6.c"
 
+echo gcc $cflags0 $cflags -c $lp
 gcc $cflags0 $cflags -c $lp
 
 if [ $? == 1 ] ; then

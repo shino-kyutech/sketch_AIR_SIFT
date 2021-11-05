@@ -99,7 +99,7 @@ void select_pivot_QBP(pivot_type *pivot, ftr_type median, ftr_sample *sample, st
 		#ifndef EXPANDED_SKETCH
 		sample_sketch[i] = 0;
 		#else
-		for(int j = 0; j < SKETCH_SIZE_QBP; j++) {
+		for(int j = 0; j < SKETCH_SIZE; j++) {
 			sample_sketch[i][j] = 0;
 		}
 		#endif
@@ -362,7 +362,7 @@ double collision(int num_sk, sketch_type sk[])
 // NUM_FLIPS:  1回の試行で同時にフリップ（0 と 255 を反転）する次元数
 void optimize_pivot_by_precision_AIR_flip(struct_work_for_pivot_selection *work)
 {
-	// 【注意】とりあえず，座標分割法には未対応なので，SKETCH_PARTITION = 3 では使用しないこと
+	// 【注意】とりあえず，座標分割法には未対応なので，SKETCH_PARTITION = 3 では使用しないこと（ただいま対応のための変更中）
 	// 質問集合に対して，再サンプリングの最終サイズを半分で止めるようにする．#define USE_HALF 
 	// USE_HALF は精度を目的関数とするときのみ，つまり，1 <= obj <= 89 にのみ対応
 
@@ -473,7 +473,7 @@ void optimize_pivot_by_precision_AIR_flip(struct_work_for_pivot_selection *work)
 			resampling_size = (double)max_num_queries / ((double)(max_num_queries - n0) / n0 * Tr * Tr + 1);
 			reuse_c = 0;
 
-			printf("Resampling: size = %d\n", resampling_size);
+//			printf("Resampling: size = %d\n", resampling_size);
 			resample_query(resampling_size, work);
 //			for(int d = 0; d < resampling_size; d++) {
 //				printf("query_num[%1d] = %d\n", d, work->query_sketch[d].query.query_num);
@@ -664,7 +664,11 @@ struct_work_for_pivot_selection *new_work_for_pivot_selection(int partition_type
 	for(int i = 0; i < num_queries; i++) {
 		work->query_sketch[i].answer.data_num = work->correct_answer[i].data_num;
 		work->query_sketch[i].answer.dist = work->correct_answer[i].dist;
+		#ifndef EXPANDED_SKETCH
 		work->query_sketch[i].answer_sketch = data_to_sketch(work->query_sketch[i].query.ftr, work->pivot);
+		#else
+		data_to_sketch(work->query_sketch[i].query.ftr, work->pivot, work->query_sketch[i].answer_sketch);
+		#endif
 	}
 	work->answer =  (answer_type *)malloc((num_queries * 2) * sizeof(answer_type)); // なぜ質問数の2倍？
 	work->sketch = (sketch_type *)malloc(sizeof(sketch_type) * num_data);
@@ -694,7 +698,13 @@ void make_sketch(struct_work_for_pivot_selection *work)
 	int num_data = work->ds_sample->num_data;
 
 	for(int i = 0; i < num_data; i++) {
+		#ifndef EXPANDED_SKETCH
 		sketch[i] = 0;
+		#else
+		for(int j = 0; j < SKETCH_SIZE; j++) {
+			sketch[i][j] = 0;
+		}
+		#endif
 	}
 
 	for(int j = 0; j < PJT_DIM; j++) {
@@ -706,7 +716,13 @@ void make_sketch(struct_work_for_pivot_selection *work)
 		// void write_bit_long(int offset, int on_off, unsigned long *d);
 		// void write_bit_expanded(int offset, int on_off, unsigned long *d);
 		for(int i = 0; i < num_data; i++) {
-			write_bit(j, dist_L2_22(ds_sample->ftr_id[i].ftr) <= pivot->r[j], &sketch[i]); // just for narrow sketches (when wider sketches then 32, modification is needed)
+			#if defined(NARROW_SKETCH)
+			write_bit(j, dist_L2_22(ds_sample->ftr_id[i].ftr) <= pivot->r[j], &sketch[i]);
+			#elif defined(WIDE_SKETCH)
+			write_bit_long(j, dist_L2_22(ds_sample->ftr_id[i].ftr) <= pivot->r[j], &sketch[i]);
+			#else
+			write_bit_expanded(j, dist_L2_22(ds_sample->ftr_id[i].ftr) <= pivot->r[j], sketch[i]);
+			#endif
 		}
 	}
 }
@@ -725,8 +741,18 @@ void make_y_sketch(struct_work_for_pivot_selection *work, int dim)
 	#pragma omp parallel for
 	#endif
 	for(int i = 0; i < num_data; i++) {
-		y_sketch[i] = sketch[i]; // just for narrow skatches (modification is needed for wide and expanded skatches)
+		#if defined(NARROW_SKETCH)
+		y_sketch[i] = sketch[i];
 		write_bit(dim, dist_L2_22(ds_sample->ftr_id[i].ftr) <= pivot->r[dim], &y_sketch[i]);
+		#elif defined(WIDE_SKETCH)
+		y_sketch[i] = sketch[i];
+		write_bit_long(dim, dist_L2_22(ds_sample->ftr_id[i].ftr) <= pivot->r[dim], &y_sketch[i]);
+		#else
+		for(int j = 0; j < SKETCH_SIZE; j++) {
+			y_sketch[i][j] = sketch[i][j];
+		}
+		write_bit_expanded(dim, dist_L2_22(ds_sample->ftr_id[i].ftr) <= pivot->r[dim], y_sketch[i]);
+		#endif
 	}
 }
 
@@ -780,7 +806,7 @@ void make_query_sketch_for_resample(int resampling_size, struct_work_for_pivot_s
     struct_query_sketch *query_sketch = work->query_sketch;
 	#ifdef EVAL_BY_SEQUENTIAL_FILTERING
     struct_dataset *ds_sample = work->ds_sample;
-    answer_type *correct_answer = work->correct_answer;
+//  answer_type *correct_answer = work->correct_answer;
 	#endif
 	// （注意）
 	// query_sketch は resampling で並べ替えられるが，correct_answer はそのままなので，
@@ -794,24 +820,37 @@ void make_query_sketch_for_resample(int resampling_size, struct_work_for_pivot_s
 				query_sketch[i].tbl[p][n] = 0;
 			}
 		}
+		#ifndef EXPANDED_SKETCH
 		query_sketch[i].answer_sketch = 0; // expandedのときは要修正
+		#else
+		for(int j = 0; j < SKETCH_SIZE; j++) {
+			query_sketch[i].answer_sketch[j] = 0;
+		}
+		#endif
 	}
 	#endif
 
 	for(int j = 0; j < PJT_DIM; j++) {
+		#if SKETCH_PARTITION != 3
 		set_dist_L2_22(pivot->p[j]);
+		#else
+		set_part_dist_L2_22(pivot->p[j], PART_START(j), PART_DIM(j));
+		#endif
 		#ifdef _OPENMP
 		#pragma omp parallel for
 		#endif
 		for(int i = 0; i < resampling_size; i++) {
 			#if SKETCH_PARTITION != 3
-//				dist_type dist = dist_L2_22(ds_query->ftr_id[i].ftr);
-				dist_type dist = dist_L2_22(query_sketch[i].query.ftr);
-				write_bit(j, dist <= pivot->r[j], &(query_sketch[i].sketch));
+			dist_type dist = dist_L2_22(query_sketch[i].query.ftr);
 			#else
-				fprintf(stderr, "Not implemented for SKETCH_PARTITON = 3 (PQBP)\n");
-				exit(0);
-				//write_bit(j, pdist_L1(database[i], pivot.piv0[j], j * 4, (j + 1) * 4 - 1)  <= pivot.rad[j], &sketch[i]);
+			dist_type dist = part_dist_L2_22(query_sketch[i].query.ftr, PART_START(j), PART_DIM(j));
+			#endif
+			#if defined(NARROW_SKETCH)
+			write_bit(j, dist <= pivot->r[j], &(query_sketch[i].sketch));
+			#elif defined(WIDE_SKETCH)
+			write_bit_long(j, dist <= pivot->r[j], &(query_sketch[i].sketch));
+			#else
+			write_bit_expanded(j, dist <= pivot->r[j], query_sketch[i].sketch);
 			#endif
 			query_sketch[i].bd[j] = abs(dist - pivot->r[j]);
 			int l;
@@ -826,14 +865,18 @@ void make_query_sketch_for_resample(int resampling_size, struct_work_for_pivot_s
 						query_sketch[i].tbl[tn][n] += query_sketch[i].bd[j];
 					}
 				}
-				if(SKETCH_PARTITION != 3) {
-					dist_type ans_dist = dist_L2_22(ds_sample->ftr_id[query_sketch[i].answer.data_num].ftr);
-					write_bit(j, ans_dist <= pivot->r[j], &(query_sketch[i].answer_sketch));
-				} else {
-					fprintf(stderr, "Not implemented for SKETCH_PARTITON = 3\n");
-					exit(0);
-					//write_bit(j, pdist_L1(database[i], pivot.piv0[j], j * 4, (j + 1) * 4 - 1)  <= pivot.rad[j], &sketch[i]);
-				}
+				#if SKETCH_PARTITION != 3
+				dist_type ans_dist = dist_L2_22(ds_sample->ftr_id[query_sketch[i].answer.data_num].ftr);
+				#else
+				dist_type ans_dist = part_dist_L2_22(ds_sample->ftr_id[query_sketch[i].answer.data_num].ftr, PART_START(j), PART_DIM(j));
+				#endif
+				#if defined(NARROW_SKETCH)
+				write_bit(j, ans_dist <= pivot->r[j], &(query_sketch[i].answer_sketch));
+				#elif defined(WIDE_SKETCH)
+				write_bit_long(j, ans_dist <= pivot->r[j], &(query_sketch[i].answer_sketch));
+				#else
+				write_bit_expanded(j, ans_dist <= pivot->r[j], query_sketch[i].answer_sketch);
+				#endif
 			#endif
 		}
 	}
@@ -872,7 +915,11 @@ void remake_query_sketch_for_resample(int dim, int resampling_size, struct_work_
     struct_dataset *ds_sample = work->ds_sample;
     answer_type *correct_answer = work->correct_answer;
 	#endif
+	#if SKETCH_PARTITION != 3
 	set_dist_L2_22(pivot->p[dim]);
+	#else
+	set_part_dist_L2_22(pivot->p[dim], PART_START(dim), PART_DIM(dim));
+	#endif
 	#ifdef _OPENMP
 	#pragma omp parallel for
 	#endif
@@ -882,12 +929,16 @@ void remake_query_sketch_for_resample(int dim, int resampling_size, struct_work_
 
 		// dim-th bit of sketch
 		#if SKETCH_PARTITION != 3
-			dist = dist_L2_22(query_sketch[i].query.ftr);
-			write_bit(dim, dist <= pivot->r[dim], &(query_sketch[i].sketch));
+		dist = dist_L2_22(query_sketch[i].query.ftr);
 		#else
-			fprintf(stderr, "Not implemented for SKETCH_PARTITON = 3\n");
-			exit(0);
-			// write_bit(dim, pdist_L1(query[i].data, pivot.piv0[dim], dim * 4, (dim + 1) * 4 - 1)  <= pivot.rad[dim], &query[i].sketch);
+		dist = part_dist_L2_22(query_sketch[i].query.ftr, PART_START(dim), PART_DIM(dim));
+		#endif
+		#if defined(NARROW_SKETCH)
+		write_bit(dim, dist <= pivot->r[dim], &(query_sketch[i].sketch));
+		#elif defined(WIDE_SKETCH)
+		write_bit_long(dim, dist <= pivot->r[dim], &(query_sketch[i].sketch));
+		#else
+		write_bit_expanded(dim, dist <= pivot->r[dim], query_sketch[i].sketch);
 		#endif
 
 		// bd
@@ -902,14 +953,18 @@ void remake_query_sketch_for_resample(int dim, int resampling_size, struct_work_
 			}
 			query_sketch[i].bd[dim] = bd_new;
 			#if SKETCH_PARTITION != 3
-				dist = dist_L2_22(ds_sample->ftr_id[correct_answer[query_sketch[i].query.query_num].data_num].ftr);
-				write_bit(dim, dist <= pivot->r[dim], &(query_sketch[i].answer_sketch));
-				query_sketch[i].answer.dist = priority(query_sketch[i].answer_sketch, &query_sketch[i].query.ftr);
+			dist = dist_L2_22(ds_sample->ftr_id[correct_answer[query_sketch[i].query.query_num].data_num].ftr);
 			#else
-				fprintf(stderr, "Not implemented for SKETCH_PARTITON = 3\n");
-				exit(0);
-				// write_bit(dim, pdist_L1(query[i].data, pivot.piv0[dim], dim * 4, (dim + 1) * 4 - 1)  <= pivot.rad[dim], &query[i].sketch);
+			dist = part_dist_L2_22(ds_sample->ftr_id[correct_answer[query_sketch[i].query.query_num].data_num].ftr, PART_START(dim), PART_DIM(dim));
 			#endif
+			#if defined(NARROW_SKETCH)
+			write_bit(dim, dist <= pivot->r[dim], &(query_sketch[i].answer_sketch));
+			#elif defined(WIDE_SKETCH)
+			write_bit_long(dim, dist <= pivot->r[dim], &(query_sketch[i].answer_sketch));
+			#else
+			write_bit_expanded(dim, dist <= pivot->r[dim], query_sketch[i].answer_sketch);
+			#endif
+			query_sketch[i].answer.dist = priority(query_sketch[i].answer_sketch, &query_sketch[i]);
 		#else
 			query_sketch[i].bd[dim] = abs(dist - pivot->r[dim]);
 		#endif
@@ -949,6 +1004,7 @@ void resample_query(int resample_size, struct_work_for_pivot_selection *work)
 	}
 }
 
+#ifdef NARROW_SKETCH
 // カーソルを使った優先度付き待ち行列を使用するimamuraバージョン（delayed enq を用いている）
 // 一部は，樋口のideaによる
 // obj: 目的関数の指定（精度）   1 <= obj <= 69 → 候補数 k' = num_data * obj / 1000 で検索したときの精度）
@@ -1203,6 +1259,7 @@ END_SEARCH: ;
 	*prec = (double)100 * num_success / resampling_size;
 	return (mode == 1 ? sum / resampling_size: (double)100 * num_success / resampling_size);
 }
+#endif
 
 #ifdef EVAL_BY_SEQUENTIAL_FILTERING
 // AIRやLSによるピボット探索時に用いる Sequential Filtering に基づく，精度（recall）の評価		
@@ -1210,16 +1267,16 @@ double precision_resample_by_sequential_filtering(int obj, int resampling_size, 
 {
 	// mode: 評価の仕方の指定：0 → 候補数割合を K(%) = obj / 10 としたときの正解数の割合（未実装）
 	//                         1 → 重み付きスコア合計
-    pivot_type *pivot = work->pivot;
+    // pivot_type *pivot = work->pivot;
     struct_dataset *ds_sample = work->ds_sample;
-    struct_dataset *ds_query = work->ds_query;
+    // struct_dataset *ds_query = work->ds_query;
     struct_query_sketch *query_sketch = work->query_sketch;
-    answer_type *correct_answer = work->correct_answer;
+    // answer_type *correct_answer = work->correct_answer;
     answer_type *answer = work->answer;
     sketch_type *sketch = work->sketch;
-    sketch_type *y_sketch = work->y_sketch;
-    struct_bucket *bucket = work->bucket;
-	int i, q;
+    // sketch_type *y_sketch = work->y_sketch;
+    // struct_bucket *bucket = work->bucket;
+	int q;
 	int num_data = ds_sample->num_data; // サンプルデータセットのデータ数
 	int trunc_K = (double)obj / 1000 * num_data; // 検索を優先度順の上位 trunc_K で打ち切る
 	int num_success = 0; // 正解が得られた質問数（mode = 0 のときに使用する）
@@ -1251,9 +1308,18 @@ double precision_resample_by_sequential_filtering(int obj, int resampling_size, 
 				n_eq++;
 			}
 		}
-		#ifdef TRUNC_K
 		if(n_low > trunc_K) continue;
-		#endif
+
+		for( ; i < num_data / 4; i++) {
+			score = priority(sketch[i], &query_sketch[q]);
+			if(score < query_sketch[q].answer.dist) {
+				n_low++;
+			} else if(score == query_sketch[q].answer.dist) {
+				n_eq++;
+			}
+		}
+		if(n_low > trunc_K) continue;
+
 		for( ; i < num_data; i++) {
 			score = priority(sketch[i], &query_sketch[q]);
 			if(score < query_sketch[q].answer.dist) {
@@ -1262,18 +1328,13 @@ double precision_resample_by_sequential_filtering(int obj, int resampling_size, 
 				n_eq++;
 			}
 		}
-		#ifdef TRUNC_K
 		if(n_low > trunc_K) continue;
-		#endif
+
 		mid_k = n_low + n_eq / 2;
 		if(mid_k < trunc_K) {
 			num_success++;
 		}
-		#ifdef TRUNC_K
-		sum += log(SCORE_FACTOR * db_header->data_num / (mid_k + 1));
-		#else
-		sum += log(ds_sample->num_data / (mid_k + 1));
-		#endif
+		sum += log(SCORE_FACTOR * ds_sample->num_data / (mid_k + 1));
 		answer[q].data_num = q + 1;
 		answer[q].dist = mid_k + 1;
 	}
@@ -1303,6 +1364,7 @@ void shuffle(int a[], int n, int m)
 	}
 }
 
+#ifdef NARROW_SKETCH
 // スケッチからバケット表（idxとbkt）を作成する
 // sk = スケッチ，num_data = データ数
 // idx, bkt = バケット表の配列へのポインタ
@@ -1328,6 +1390,7 @@ void make_idx_bkt(sketch_type sk[], int num_data, int **idx, int **bkt)
 	for(int i = 0; i < num_data; i++) (*idx)[bucket[sk[i]]++] = i;
 	(*bkt)[0] = 0;
 }
+#endif
 
 void make_pivot_center_for_QBP(ftr_type quantized, ftr_type center, ftr_type med)
 {

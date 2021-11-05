@@ -2,12 +2,13 @@
 
 # RAM = 20GB (process = 15GB)
 
-p1=pivot_QBP_t1000_w22_sd00_ss10000_seed1
+p1=pivot_Q1000_A100000_L0_w22_s1_k20_1M.pivot
+#p1=pivot_QBP_t1000_w22_sd00_ss10000_seed1
 #p1=pivot_QBP_t1000_w28_sd00_ss10000
 p2=pivot_PQBP_t10_w192_sd00_ss10000_np8_sr1000_seed1
 range=00_99
 query=00
-result=double_filtering_w22_w192_q00.csv
+result=double_filtering_w22_AIR_w192_q00.csv
 k1=10000
 #k2=100
 nk=100

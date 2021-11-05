@@ -43,8 +43,8 @@ cflags0="$cflags0 -DWIDE_SKETCH"
 else
 cflags0="$cflags0 -DNARROW_SKETCH"
 fi
-cflags0="$cflags0 -DSAMPLE_SIZE=$ss"
-cflags0="$cflags0 -DSAMPLE_SIZE_FOR_RADIUS=$sr"
+cflags0="$cflags0 -DSAMPLE_SIZE_QBP=$ss"
+cflags0="$cflags0 -DSAMPLE_SIZE_RADIUS=$sr"
 cflags0="$cflags0 -DNUM_TRIAL_QBP=$tr"
 #cflags0="$cflags0 -DPARTITION_TYPE_QBP"
 cflags0="$cflags0 -DPARTITION_TYPE_PQBP"

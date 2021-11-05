@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 				if(p < ans[i][q].dist) k++;
 				if(p == ans[i][q].dist) e++;
 				if(t == 0 && j % (num_data / 100) == 0) {
-					fprintf(stderr, "i = %d, processed = %d\%\r", i, j / (num_data / 100));
+					fprintf(stderr, "i = %d, processed = %d%%\r", i, j / (num_data / 100));
 				}
 			}
 			if(t == 0) fprintf(stderr, "\n");

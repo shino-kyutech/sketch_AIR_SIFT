@@ -2,10 +2,13 @@
 
 # RAM = 20GB (process = 15GB)
 
-p1=pivot_QBP_t1000_w26_sd00_ss10000
+p1=pivot_FS_Q1000_A30000_L0_w26_n1_s1_k20_1M.pivot
+#p1=pivot_QBP_t1000_w26_sd00_ss10000
 #p1=pivot_QBP_t1000_w22_sd00_ss10000_seed1
 #p1=pivot_QBP_t1000_w28_sd00_ss10000
-p2=pivot_PQBP_t10_w192_sd00_ss10000_np8_sr1000_seed1
+p2=pivot_FS_Q10_A10000_L0_w192_n1_s1_k1_1M.pivot
+#p2=pivot_FS_Q10_A10000_L0_w192_n1_s1_k20_100K.pivot
+#p2=pivot_PQBP_t10_w192_sd00_ss10000_np8_sr1000_seed1
 range=00_99
 query=00
 result=double_filtering_w26_w192_q00.csv
@@ -23,7 +26,7 @@ nt=8
 
 # w=26 recall=90
 
-./search_by_double_filtering_multi.sh INTEL $p1 $p2 $range 00 01 02 $result 2000 3500 500 1.7 2.0 0.1 $nk $nq $s1 $s2 $nt
+./search_by_double_filtering_multi.sh INTEL $p1 $p2 $range 00 01 02 $result 1800 2200 100 0.2 1.2 0.1 $nk $nq $s1 $s2 $nt
 exit
 
 ./search_by_double_filtering_multi.sh INTEL $p1 $p2 $range 00 01 02 $result 3000 3000 500 1.8 1.8 0.1 $nk $nq $s1 $s2 $nt

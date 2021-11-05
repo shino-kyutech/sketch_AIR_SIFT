@@ -18,14 +18,14 @@
 #define SEED 1 // random seed
 
 #define PARTITION_TYPE_QBP
-#define SKETCH_PARTITION 2 // QBP
-//#define PARTITION_TYPE_PQBP
+#define SKETCH_PARTITION 3 // QBP
+#define PARTITION_TYPE_PQBP
 
 #define _OPENMP
 #define NUM_THREADS 8
-#define NARROW_SKETCH
+//#define NARROW_SKETCH
 //#define WIDE_SKETCH
-//#define EXPANDED_SKETCH
+#define EXPANDED_SKETCH
 
 #define PJT_DIM 16
 #define SAMPLE_SIZE 10000

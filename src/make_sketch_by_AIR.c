@@ -32,8 +32,6 @@ int main(int argc, char *argv[])
 	int partition_type = QBP;
 	#elif defined(PARTITION_TYPE_PQBP)
 	int partition_type = PQBP;
-	fprintf(stderr, "sorry, AIR is not implemented only for QBP.\n");
-	return -1;
 	#else
 	#error "PARTITION_TYPE_QBP or PARTITION_TYPE_PQBP should be defined."
 	#endif
