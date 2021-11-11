@@ -106,6 +106,9 @@ typedef struct {
 	dist_type tbl[TABLE_SIZE][256]; 	// scoreの計算に用いる表関数
 	answer_type answer; 	// 最近傍のデータ番号と距離
 	sketch_type answer_sketch; // 最近傍のスケッチ
+	#ifdef USE_AIR
+	int computed;			// AIRにおけるピボット評価のとき再サンプリングで選ばれていてquery_sketchが計算済みかどうか
+	#endif
 } struct_query_sketch;
 
 //	sketch_type sk;		// sketch

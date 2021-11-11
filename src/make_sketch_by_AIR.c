@@ -6,6 +6,7 @@
 #endif
 #include "parm.h"
 #include "config.h"
+#include "ftr.h"
 #include "bit_op.h"
 #include "sketch.h"
 #include "quick.h"

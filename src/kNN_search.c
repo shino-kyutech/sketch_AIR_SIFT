@@ -116,6 +116,7 @@ dist_type part_dist_L2_2(ftr_type a, ftr_type b, int dim_start, int dim, dist_ty
 void set_part_dist_L2_22(ftr_type a, int dim_start, int dim)
 {
 	int j;
+	if(point_a == NULL) point_a = (int *)malloc(sizeof(int) * FTR_DIM);
 	for(j = dim_start; j < dim_start + dim; j++) {
 		point_a[j] = a[j];
 	}

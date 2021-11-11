@@ -1,16 +1,17 @@
 #include "sketch.h"
 
 #ifdef USE_AIR
-//    pivot_type *pivot;
-//    struct_dataset *ds_sample;
-//    struct_dataset *ds_query;
-//    ftr_type med;
-//    struct_query_sketch *query_sketch;
-//    answer_type *correct_answer;
-//    answer_type *answer;
-//    sketch_type *sketch;
-//    sketch_type *y_sketch;
-//    struct_bucket *bucket;
+//    pivot_type *pivot;                      // ピボット
+//    struct_dataset *ds_sample;              // ピボット評価（検索精度（recall））のための（小さな）サンプルデータセット
+//    struct_dataset *ds_query;               // 質問データセット
+//    ftr_type med;                           // サンプルデータセットの中央値
+//    struct_query_sketch *query_sketch;      // 検索のための構造体（質問，bd, idx, tbl, answer）
+//    answer_type *correct_answer;            // 正解情報（data_num，dist）
+//    answer_type *answer;                    // 検索時の解（data_num，dist または score）
+//    sketch_type *sketch;                    // サンプルデータのスケッチ
+//    sketch_type *y_sketch;                  // サンプルデータのスケッチ（一時退避用）
+//    struct_bucket *bucket;                  // サンプルデータセットのバケット表
+//    struct_bucket *y_bucket;                // サンプルデータセットのバケット表（一時退避用）
 typedef struct {
     pivot_type *pivot;                      // ピボット
     struct_dataset *ds_sample;              // ピボット評価（検索精度（recall））のための（小さな）サンプルデータセット
@@ -22,6 +23,7 @@ typedef struct {
     sketch_type *sketch;                    // サンプルデータのスケッチ
     sketch_type *y_sketch;                  // サンプルデータのスケッチ（一時退避用）
     struct_bucket *bucket;                  // サンプルデータセットのバケット表
+    struct_bucket *y_bucket;                // サンプルデータセットのバケット表（一時退避用）
 } struct_work_for_pivot_selection;
 #endif
     // pivot_type *pivot = work->pivot;
