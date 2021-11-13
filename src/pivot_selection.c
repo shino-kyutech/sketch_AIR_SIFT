@@ -947,7 +947,7 @@ void make_query_sketch_for_resample(int resampling_size, struct_work_for_pivot_s
 	#pragma omp parallel for
 	#endif
 	for(int i = 0; i < resampling_size; i++) {
-		if(query_sketch[i].selected) continue;	// 前回の再サンプルで選択されているもののquery_sketchは計算不要
+		if(query_sketch[i].computed) continue;	// 前回の再サンプルで選択されているもののquery_sketchは計算不要
 		query_sketch[i].computed = 1;
 		query_sketch[i].answer.dist = priority(query_sketch[i].answer_sketch, &query_sketch[i]);
 	}

@@ -375,7 +375,7 @@ int main(int argc, char *argv[])
 			#if NUM_K <= 0
 				//fprintf(stderr, "%.9ld\n", e_time(&tp3, &tp5));
 			#else
-				if(num_queries <= 20 || i % 10 == 0) {
+				if(num_queries <= 20 || i % 100 == 0) {
 					fprintf(stderr, "%.9lf, %.9lf, %.9lf, %.9lf, %.9lf, %d, %d, %d\n", scoring_cost, filtering_cost, kNN_cost, 
 									e_time(&tp4, &tp5), e_time(&tp3, &tp5), i, top_k[i]->buff[0].data_num, top_k[i]->buff[0].dist);
 					fprintf(stderr, "sort_cost = %.9lf, kNN_cost = %.9lf\n", sort_cost, kNN_cost);

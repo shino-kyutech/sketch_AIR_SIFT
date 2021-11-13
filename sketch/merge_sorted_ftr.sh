@@ -1,22 +1,24 @@
 #!/bin/bash
-if [ $# -ne 4 ] ; then
+if [ $# -ne 5 ] ; then
 echo "Usage>"
 echo "1. pivot   = pivot file"
 echo "2. from    = file number of FROM"
 echo "3. to      = file number of TO"
 echo "4. step    = step of file number"
+echo "5. storage = HDD, INTEL"
 exit 1
 fi
 #set -x
 
 ulimit -Sn 4000
 
-source ../src/set_directory.sh HDD
-
 pivot=$1; shift
 from=$1; shift
 to=$1; shift
 step=$1; shift
+storage=$1; shift
+
+source ../src/set_directory.sh $storage
 
 pv="$pv_dir/${pivot}.csv"
 if [ ! -e $pv ]; then

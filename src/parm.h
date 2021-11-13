@@ -23,9 +23,9 @@
 
 #define _OPENMP
 #define NUM_THREADS 8
-//#define NARROW_SKETCH
+#define NARROW_SKETCH
 //#define WIDE_SKETCH
-#define EXPANDED_SKETCH
+//#define EXPANDED_SKETCH
 
 #define PJT_DIM 16
 #define SAMPLE_SIZE 10000
@@ -43,8 +43,8 @@
 #define NUM_CANDIDATES5 600
 
 //#define FILTERING_BY_SKETCH_ENUMERATION
-#define FILTERING_BY_SKETCH_ENUMERATION_C2N
-//#define SEQUENTIAL_FILTERING
+//#define FILTERING_BY_SKETCH_ENUMERATION_C2N
+#define SEQUENTIAL_FILTERING
 //#define SEQUENTIAL_FILTERING_USING_BUCKET
 //#define SEQUENTIAL_FILTERING_USING_HAMMING
 //#define DOUBLE_FILTERING
@@ -97,7 +97,7 @@
 #define T_POWER 2
 #define N0 500				//初期サンプルサイズ
 
-#define EVAL_BY_SEQUENTIAL_FILTERING // AIRでピボットの評価に sequential filtering を用いるときに #define
+// #define EVAL_BY_SEQUENTIAL_FILTERING // AIRでピボットの評価に sequential filtering を用いるときに #define
 
 #define EVAL_PRECISION precision_resample_cursor_2_n
 // #define EVAL_PRECISION precision_resample_by_sequential_filtering
